@@ -1,6 +1,6 @@
 // frontend/src/hooks/useSalesData.js
 import { useState, useEffect, useCallback } from 'react';
-import { fetchSales } from '../services/salesService';
+import { fetchSales,fetchFilterOptions } from '../services/salesService';
 
 export const useSalesData = () => {
   
@@ -74,6 +74,23 @@ export const useSalesData = () => {
     }
   }, [page, search, filters, sort]);
 
+  const [options, setOptions] = useState({
+    regions: [],
+    genders: [],
+    categories: [],
+    payments: [],
+    tags: []
+  });
+
+  // 1. Fetch All Options on Mount
+  useEffect(() => {
+    const loadOptions = async () => {
+      const data = await fetchFilterOptions();
+      setOptions(data);
+    };
+    loadOptions();
+  }, []);
+
   // Trigger fetch when dependencies change (with debounce for search)
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -111,6 +128,7 @@ export const useSalesData = () => {
     data, loading, error, total,
     // UI State
     page, search, filters, sort,
+    options,
     // Actions
     handlePageChange, handleSearch, handleFilterChange, handleSortChange
   };

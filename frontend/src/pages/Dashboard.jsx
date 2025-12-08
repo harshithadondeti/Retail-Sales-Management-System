@@ -8,7 +8,7 @@ import StatsCards from '../components/StatsCards';
 
 const Dashboard = () => {
   const {
-    data, loading, total, page, filters, sort,
+    data, loading, total, page, filters, sort,options,
     handlePageChange, handleSearch, handleFilterChange, handleSortChange
   } = useSalesData();
 
@@ -25,7 +25,7 @@ const Dashboard = () => {
 
       {/* 2. TOOLBAR: Filters + Sort  */}
       <div className="toolbar-row">
-        <FilterPanel filters={filters} onFilterChange={handleFilterChange} />
+        <FilterPanel filters={filters} onFilterChange={handleFilterChange} options={options} />
         
         {/* Sort Dropdown - Figma Style */}
         <div className="sort-control">

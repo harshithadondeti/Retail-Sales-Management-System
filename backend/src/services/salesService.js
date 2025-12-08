@@ -78,4 +78,56 @@ const getSalesData = async ({
   };
 };
 
-module.exports = { getSalesData };
+
+// Helper to get distinct values from a column
+const getDistinct = async (column) => {
+  // Queries distinct non-null values
+  const query = `
+    SELECT DISTINCT ${column} 
+    FROM sales 
+    WHERE ${column} IS NOT NULL AND ${column} != '' 
+    ORDER BY ${column} ASC
+  `;
+  const result = await pool.query(query);
+  return result.rows.map(row => row[column]);
+};
+
+const getUniqueTags = async () => {
+  // 1. Split tags by comma
+  // 2. Unnest them into individual rows
+  // 3. Trim whitespace
+  // 4. Select DISTINCT values
+  const query = `
+    SELECT DISTINCT trim(unnest(string_to_array(tags, ','))) as tag 
+    FROM sales 
+    WHERE tags IS NOT NULL AND tags != ''
+    ORDER BY tag ASC;
+  `;
+  
+  const result = await pool.query(query);
+  return result.rows.map(row => row.tag);
+};
+
+// Main function to fetch all metadata
+const getFilterOptions = async () => {
+  // Run all queries in parallel for performance
+  const [regions, genders, categories, payments, tags] = await Promise.all([
+    getDistinct('customer_region'),
+    getDistinct('gender'),
+    getDistinct('product_category'),
+    getDistinct('payment_method'),
+    getUniqueTags() // Re-use the tag logic we wrote earlier
+  ]);
+
+  return {
+    regions,
+    genders,
+    categories,
+    payments,
+    tags
+  };
+};
+
+// Update exports
+module.exports = { getSalesData, getFilterOptions };
+

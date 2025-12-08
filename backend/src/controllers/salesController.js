@@ -27,4 +27,18 @@ const getSales = async (req, res) => {
   }
 };
 
-module.exports = { getSales };
+const getFilters = async (req, res, next) => {
+  try {
+    const filters = await salesService.getFilterOptions();
+
+    res.json({
+      success: true,
+      data: filters
+    });
+  } catch (error) {
+    // Manually pass the error to the global error handler
+    next(error);
+  }
+};
+
+module.exports = { getSales, getFilters };

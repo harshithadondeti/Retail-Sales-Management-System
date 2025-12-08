@@ -23,3 +23,21 @@ export const fetchSales = async (params) => {
     throw new Error(error.response?.data?.message || 'Failed to connect to the server.');
   }
 };
+
+
+export const fetchFilterOptions = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/filters`);
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to fetch filter options:", error);
+    // Return safe defaults if API fails
+    return {
+      regions: [],
+      genders: [],
+      categories: [],
+      payments: [],
+      tags: []
+    };
+  }
+};
