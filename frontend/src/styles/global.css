@@ -1,0 +1,624 @@
+/* -------------------------------------------------------------------------- */
+/* 1. VARIABLES & RESET                                                      */
+/* -------------------------------------------------------------------------- */
+:root {
+  /* TruEstate Brand Colors */
+  --primary-color: #2563eb;       /* Royal Blue */
+  --primary-hover: #1d4ed8;
+  --bg-color: #f8fafc;            /* Light Grey Background */
+  --surface-color: #ffffff;       /* White Cards */
+  --text-primary: #111827;        /* Almost Black (High Contrast) */
+  --text-secondary: #6b7280;      /* Muted Grey */
+  --border-color: #e5e7eb;        /* Light Border */
+  
+  /* Spacing & Radius */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. LAYOUT CONTAINERS                                                      */
+/* -------------------------------------------------------------------------- */
+.app-container {
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. HEADER & SEARCH SECTION                                                */
+/* -------------------------------------------------------------------------- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.header-search {
+  width: 320px;
+}
+
+.search-bar {
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem; /* Left padding for icon */
+  border: 1px solid var(--border-color);
+  border-radius: 999px; /* Rounded pill style for search */
+  font-size: 0.9rem;
+  background-color: var(--surface-color);
+  transition: all 0.2s ease;
+
+  /* SEARCH ICON (Magnifying Glass) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 1rem center;
+  background-size: 18px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. TOOLBAR (Filters, Sort, Reset)                                         */
+/* -------------------------------------------------------------------------- */
+.toolbar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-panel {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* --- FILTER GROUP (Ghost Select Style) --- */
+.filter-group {
+  position: relative;
+  height: 40px;
+  min-width: 140px;
+}
+
+/* Visual Layer */
+.custom-select-display {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 2rem 0 1rem;
+  background-color: var(--surface-color);
+  border: 1px solid #E5E7EB;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+  
+  /* Dropdown Arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 14px;
+}
+
+/* Functional Layer (Invisible) */
+.ghost-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 16px;
+}
+
+/* Active State (Blue) */
+.filter-group.active .custom-select-display,
+.filter-group.active .range-pill {
+  background-color: #EFF6FF;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+  
+  /* Blue Arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232563EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* --- RANGE INPUTS (Age, Date, Tags) --- */
+.range-pill {
+  display: flex;
+  align-items: center;
+  background-color: var(--surface-color);
+  border: 1px solid #E5E7EB;
+  border-radius: 999px;
+  padding: 0 1rem;
+  height: 40px;
+  min-width: 160px;
+  
+  /* Remove dropdown arrow */
+  background-image: none !important; 
+}
+
+.range-label {
+  font-size: 0.85rem;
+  color: #6B7280;
+  margin-right: 0.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.range-pill input {
+  border: none;
+  background: transparent;
+  width: 50px;
+  font-size: 0.85rem;
+  color: #374151;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.range-pill input:focus {
+  outline: none;
+  border-bottom: 1px solid var(--primary-color);
+}
+
+/* Hide Number Arrows */
+.range-pill input::-webkit-outer-spin-button,
+.range-pill input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.range-pill input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Date Range Specifics */
+.date-pill {
+    min-width: 240px;
+}
+.date-pill input {
+    width: 85px;
+    text-align: left;
+}
+.range-sep {
+  color: #9CA3AF;
+  margin: 0 0.5rem;
+}
+
+/* --- RESET BUTTON (ICON STYLE) --- */
+.clear-filters-btn {
+  /* Hides the text "Clear All" but keeps button clickable */
+  font-size: 0; 
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Circle */
+  border: 1px solid #E5E7EB;
+  background-color: var(--surface-color);
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  /* Reset Icon */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px;
+}
+
+.clear-filters-btn:hover {
+  background-color: #F3F4F6;
+  border-color: #D1D5DB;
+  transform: rotate(-45deg); /* Playful interaction */
+}
+
+.clear-filters-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- SORT CONTROL --- */
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #6B7280;
+  margin-left: auto;
+}
+
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  background-color: transparent;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+  cursor: pointer;
+  padding-right: 1.2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23111827'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 12px;
+}
+
+.sort-select:focus {
+  outline: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. STATS CARDS                                                            */
+/* -------------------------------------------------------------------------- */
+.stats-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--surface-color);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  min-width: 220px;
+  flex: 1;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. DATA TABLE                                        */
+/* -------------------------------------------------------------------------- */
+.table-container {
+  background: var(--surface-color);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  margin-bottom: 1rem;
+}
+
+/* Scroll wrapper for many columns */
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.8rem; /* Slightly smaller font for dense data */
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+
+.sales-table th {
+  background-color: #F9FAFB;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #6B7280;
+  border-bottom: 1px solid #E5E7EB;
+  cursor: default; 
+  user-select: none;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.sales-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #F3F4F6;
+  color: #111827;
+  vertical-align: middle;
+}
+
+.sales-table tr:hover {
+  background-color: #F9FAFB;
+}
+
+/* Typography Utilities for Table */
+.font-medium {
+  font-weight: 600;
+  color: #111827;
+}
+
+.font-bold {
+  font-weight: 700;
+  color: #111827;
+}
+
+.text-secondary {
+  color: #4B5563;
+}
+
+.copy-icon {
+  margin-left: 6px;
+  font-size: 0.8em;
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.copy-icon:hover {
+  opacity: 1;
+}
+
+/* Mini Tags for the new column */
+.tags-cell {
+    display: flex;
+    gap: 4px;
+}
+
+.mini-tag {
+    background-color: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.7rem;
+    color: #4B5563;
+}
+/* -------------------------------------------------------------------------- */
+/* 7. BADGES & UTILITIES                                                     */
+/* -------------------------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.category-badge {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.tag-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.text-muted {
+  color: #94a3b8;
+}
+
+.loading, .no-results {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-secondary);
+}
+
+.no-results button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 8. PAGINATION                                                             */
+/* -------------------------------------------------------------------------- */
+.pagination-container {
+  display: flex;
+  justify-content: center; /* Centered layout */
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 0;
+  margin-top: auto; /* Push to bottom if container has height */
+}
+
+.pagination-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  border: 1px solid #E5E7EB;
+  background-color: #FFFFFF;
+  border-radius: 6px; /* Soft rounded corners */
+  
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151; /* Dark grey text */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover State */
+.pagination-btn:hover:not(:disabled):not(.active):not(.dots) {
+  background-color: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+/* Active Page (Dark Black/Grey) */
+.pagination-btn.active {
+  background-color: #111827; /* Match header text color */
+  color: #FFFFFF;
+  border-color: #111827;
+}
+
+/* Navigation Buttons (< >) */
+.pagination-btn.nav-btn {
+  font-size: 1.2rem; /* Larger arrows */
+  color: #6B7280;
+  padding-bottom: 4px; /* Align arrow visually */
+}
+
+/* Disabled State */
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #F9FAFB;
+}
+
+/* Ellipsis (...) */
+.pagination-btn.dots {
+  border: none;
+  background: transparent;
+  cursor: default;
+  color: #9CA3AF;
+  min-width: 24px;
+}
+
+
+.no-results-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  color: #374151;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.reset-btn {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* -------------------------------------------------------------------------- */
+/* MULTI-SELECT DROPDOWN STYLES                                              */
+/* -------------------------------------------------------------------------- */
+
+/* The Dropdown Menu (Popup) */
+.multiselect-dropdown {
+  position: absolute;
+  top: 115%; /* Just below the pill */
+  left: 0;
+  width: 200px;
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 50;
+  padding: 0.5rem;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Individual Option Row */
+.multiselect-option {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.1s;
+}
+
+.multiselect-option:hover {
+  background-color: #F3F4F6;
+}
+
+/* Checkbox Square */
+.checkbox-box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #D1D5DB;
+  border-radius: 4px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Checked State */
+.checkbox-box.checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.multiselect-option.selected .option-label {
+  font-weight: 600;
+  color: #111827;
+}
+
+.option-label {
+  font-size: 0.9rem;
+  color: #4B5563;
+}
